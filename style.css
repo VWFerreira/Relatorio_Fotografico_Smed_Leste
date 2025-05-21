@@ -141,15 +141,14 @@ legend {
 
 .foto-card textarea,
 .foto-card .descricao-servico {
-    width: 100%;
-    resize: vertical;
-    padding: 8px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    box-sizing: border-box;
-    margin-bottom: 8px;
+    font-size: 9px !important; /* tamanho menor */
+    line-height: 1.2;
+    overflow: hidden;
+    resize: none !important;
+    height: auto;
+    min-height: 1em;
 }
+
 
 .foto-card textarea:focus,
 .foto-card .descricao-servico:focus {
