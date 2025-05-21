@@ -470,8 +470,10 @@ textarea,
     border-bottom: 1px solid #000 !important;
     box-shadow: none !important;
     color: #000 !important;
-    resize: none !important;
+    resize: none !important; /* Garante que não aparecem as setas */
+    overflow: hidden !important; /* Impede barra de rolagem */
 }
+
 
 /* Remove seta visual do select (OBRA) */
 select {
