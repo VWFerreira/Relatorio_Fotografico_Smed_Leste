@@ -123,3 +123,12 @@ function atualizarEndereco() {
     enderecoCampo.value = enderecoBase;
     empresaCampo.value = "ENGPAC";
 }
+
+// Ajusta altura automaticamente de todos os textareas
+document.addEventListener("input", function (event) {
+  if (event.target.tagName.toLowerCase() === "textarea") {
+    event.target.style.height = "auto";
+    event.target.style.height = event.target.scrollHeight + "px";
+  }
+});
+
