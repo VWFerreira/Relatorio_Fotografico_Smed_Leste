@@ -109,18 +109,22 @@ legend {
 }
 
 .bloco-4-fotos {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.8cm; /* espaço entre os cards */
-  margin-bottom: 1cm;
-  padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8cm;
+    margin-bottom: 20px;
+    page-break-inside: avoid;
 }
 
 .foto-card {
-  width: 9.5cm;
-  height: 12cm;
-  padding: 0.5cm;
-  box-sizing: border-box;
+    border: 2px solid #000;
+    border-radius: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    page-break-inside: avoid;
+    object-fit: contain;
 }
 
 .foto-card img {
