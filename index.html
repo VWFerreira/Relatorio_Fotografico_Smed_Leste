@@ -35,49 +35,54 @@
     <form>
       <h3 class="titulo-secao">DADOS DA OBRA:</h3>
       <fieldset class="dados-obra mb-4">
-        <select id="obra" class="input-menor form-select mb-3" onchange="atualizarEndereco()">
-          <option value=""><strong>OBRA:</strong></option>
-          <option value="EMEEF Prof. Luiz Francisco Lucena Borges">EMEEF Prof. Luiz Francisco Lucena Borges</option>
-          <option value="EMEF Nossa Senhora de Fátima">EMEF Nossa Senhora de Fátima</option>
-          <option value="EMEF José Mariano Beck">EMEF José Mariano Beck</option>
-          <option value="EMEF América">EMEF América</option>
-          <option value="EMEF Prof. Judith Macedo de Araújo">EMEF Prof. Judith Macedo de Araújo</option>
-          <option value="EMEF Dep. Marcírio Goulart Loureiro">EMEF Dep. Marcírio Goulart Loureiro</option>
-          <option value="EMEF Morro da Cruz">EMEF Morro da Cruz</option>
-          <option value="EMEF Heitor Villa Lobos">EMEF Heitor Villa Lobos</option>
-          <option value="EMEF Rincão">EMEF Rincão</option>
-          <option value="EMEF Afonso Guerreiro Lima">EMEF Afonso Guerreiro Lima</option>
-          <option value="EMEF Saint Hilaire">EMEF Saint Hilaire</option>
-          <option value="EMEI Protásio Alves">EMEI Protásio Alves</option>
-          <option value="EMEI Vale Verde">EMEI Vale Verde</option>
-          <option value="EMEI Jardim Bento Gonçalves">EMEI Jardim Bento Gonçalves</option>
-          <option value="EMEI Padre Ângelo Costa">EMEI Padre Ângelo Costa</option>
-          <option value="EMEI Dr. Walter Silber">EMEI Dr. Walter Silber</option>
-          <option value="EMEI Maria Marques Fernandes">EMEI Maria Marques Fernandes</option>
-          <option value="EMEI Vila Mapa II">EMEI Vila Mapa II</option>
-          <option value="EMEI Vila Nova São Carlos">EMEI Vila Nova São Carlos</option>
-        </select>
-
+        <div class="mb-3">
+          <label for="obra">OBRA:</label>
+          <select id="obra" class="input-menor form-select" onchange="atualizarEndereco()">
+            <option value="">Selecione a escola</option>
+            <option value="EMEEF Prof. Luiz Francisco Lucena Borges">EMEEF Prof. Luiz Francisco Lucena Borges</option>
+            <option value="EMEF Nossa Senhora de Fátima">EMEF Nossa Senhora de Fátima</option>
+            <option value="EMEF José Mariano Beck">EMEF José Mariano Beck</option>
+            <option value="EMEF América">EMEF América</option>
+            <option value="EMEF Prof. Judith Macedo de Araújo">EMEF Prof. Judith Macedo de Araújo</option>
+            <option value="EMEF Dep. Marcírio Goulart Loureiro">EMEF Dep. Marcírio Goulart Loureiro</option>
+            <option value="EMEF Morro da Cruz">EMEF Morro da Cruz</option>
+            <option value="EMEF Heitor Villa Lobos">EMEF Heitor Villa Lobos</option>
+            <option value="EMEF Rincão">EMEF Rincão</option>
+            <option value="EMEF Afonso Guerreiro Lima">EMEF Afonso Guerreiro Lima</option>
+            <option value="EMEF Saint Hilaire">EMEF Saint Hilaire</option>
+            <option value="EMEI Protásio Alves">EMEI Protásio Alves</option>
+            <option value="EMEI Vale Verde">EMEI Vale Verde</option>
+            <option value="EMEI Jardim Bento Gonçalves">EMEI Jardim Bento Gonçalves</option>
+            <option value="EMEI Padre Ângelo Costa">EMEI Padre Ângelo Costa</option>
+            <option value="EMEI Dr. Walter Silber">EMEI Dr. Walter Silber</option>
+            <option value="EMEI Maria Marques Fernandes">EMEI Maria Marques Fernandes</option>
+            <option value="EMEI Vila Mapa II">EMEI Vila Mapa II</option>
+            <option value="EMEI Vila Nova São Carlos">EMEI Vila Nova São Carlos</option>
+          </select>
+        </div>
+    
         <div class="mb-3">
           <label for="local">LOCAL:</label>
-          <textarea id="local" class="input-menor form-control" rows="2"></textarea>
+          <textarea id="local" class="input-menor form-control" rows="2" readonly></textarea>
         </div>
-
-        <div class="mb-3">
-          <label for="medicao">MEDIÇÃO:</label>
-          <input type="text" id="medicao" class="input-menor form-control">
-        </div>
-
+    
         <div class="mb-3">
           <label for="empresa">EMPRESA EXECUTORA:</label>
           <input type="text" id="empresa" class="input-menor form-control" value="ENGPAC" readonly>
         </div>
-
+    
+        <div class="mb-3">
+          <label for="medicao">MEDIÇÃO:</label>
+          <input type="text" id="medicao" class="input-menor form-control">
+        </div>
+    
         <div class="mb-3">
           <label for="data">DATA:</label>
           <input type="date" id="data" class="input-pequeno form-control">
         </div>
       </fieldset>
+    </form>
+
       <h3 class="titulo-secao">RELATÓRIO FOTOGRÁFICO:</h3>
       <fieldset class="texto mb-4">
         <div class="mb-3">
