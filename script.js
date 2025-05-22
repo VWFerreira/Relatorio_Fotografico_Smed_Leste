@@ -1,34 +1,28 @@
 let formularios = [];
 
 const BIN_ID = "682f9e008960c979a59fafc3";
-const API_KEY = "$2a$10$c05DFLTv7rO5jr0vEr8gfOtadh6z6ztWedJjNr.k/m0tMCP5oXEdi"; // Copie da seção "CHAVES DE API" do JSONBin
+const API_KEY = "$2a$10$c05DFLTv7rO5jr0vEr8gfOtadh6z6ztWedJjNr.k/m0tMCP5oXEdi";
 
 async function carregarFormularios() {
-    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-    method: "PUT",
-    headers: {
-        "Content-Type": "application/json",
-        "X-Master-Key": API_KEY,
-        "X-Bin-Versioning": false,
-    },
-    body: JSON.stringify(formularios),
-})
-.then(response => {
-    if (!response.ok) {
-        throw new Error("Erro ao salvar no JSONBin");
+    try {
+        const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+            headers: {
+                "X-Master-Key": API_KEY,
+            },
+        });
+        const data = await res.json();
+        formularios = data.record || [];
+        atualizarLista();
+    } catch (err) {
+        console.error("Erro ao carregar dados:", err);
     }
-    return response.json();
-})
-.then(() => {
-    idAtual = null;
-    atualizarLista();
-    limparFormulario();
-})
-.catch(error => {
-    console.error("Erro ao salvar:", error);
-    alert("Erro ao salvar o formulário. Veja o console para detalhes.");
-});
+}
 
+let idAtual = null;
+
+window.onload = () => {
+    carregarFormularios();
+};
 
 function salvarFormulario() {
     const dados = {
@@ -46,18 +40,12 @@ function salvarFormulario() {
         return;
     }
 
-    const blocos = document.querySelectorAll(".bloco-4-fotos .foto-card");
-    blocos.forEach((card) => {
-        const descricao = card.querySelector(
-            "textarea[placeholder='Descrição do Serviço']"
-        ).value;
-
+    document.querySelectorAll(".bloco-4-fotos .foto-card").forEach((card) => {
+        const descricao = card.querySelector("textarea[placeholder='Descrição do Serviço']").value;
         const img = card.querySelector("img");
-
         dados.fotos.push({
             descricao,
-            imagem:
-                img && img.src && img.style.display !== "none" ? img.src : null,
+            imagem: img && img.src && img.style.display !== "none" ? img.src : null,
         });
     });
 
@@ -74,14 +62,16 @@ function salvarFormulario() {
         headers: {
             "Content-Type": "application/json",
             "X-Master-Key": API_KEY,
-            "X-Bin-Versioning": false,
+            "X-Bin-Versioning": false
         },
         body: JSON.stringify(formularios),
+    }).then(() => {
+        idAtual = null;
+        atualizarLista();
+        limparFormulario();
+    }).catch((err) => {
+        console.error("Erro ao salvar:", err);
     });
-
-    idAtual = null;
-    atualizarLista();
-    limparFormulario();
 }
 
 function limparFormulario() {
@@ -126,7 +116,7 @@ function atualizarLista() {
         botoes.className = "d-flex gap-2 mt-2";
 
         const abrirBtn = document.createElement("button");
-        abrirBtn.className = "btn btn-sm btn-success"; // botão verde
+        abrirBtn.className = "btn btn-sm btn-success";
         abrirBtn.innerText = "Abrir";
         abrirBtn.onclick = () => abrirFormulario(form.id);
 
@@ -146,7 +136,6 @@ function atualizarLista() {
         botoes.appendChild(abrirBtn);
         botoes.appendChild(excluirBtn);
         botoes.appendChild(imprimirBtn);
-
         li.appendChild(info);
         li.appendChild(botoes);
         lista.appendChild(li);
@@ -166,15 +155,9 @@ function abrirFormulario(id) {
 
     form.fotos?.forEach((foto) => {
         adicionarFotos();
-        const ultimoCard = document.querySelector(
-            ".bloco-4-fotos:last-child .foto-card:last-child"
-        );
+        const ultimoCard = document.querySelector(".bloco-4-fotos:last-child .foto-card:last-child");
         if (!ultimoCard) return;
-
-        ultimoCard.querySelector(
-            "textarea[placeholder='Descrição do Serviço']"
-        ).value = foto.descricao || "";
-
+        ultimoCard.querySelector("textarea[placeholder='Descrição do Serviço']").value = foto.descricao || "";
         if (foto.imagem) {
             const img = ultimoCard.querySelector("img");
             img.src = foto.imagem;
@@ -237,7 +220,6 @@ function adicionarFotos() {
     card.appendChild(botoes);
     card.appendChild(input);
     card.appendChild(img);
-
     ultimoBloco.appendChild(card);
 }
 
@@ -245,7 +227,6 @@ function preview(input) {
     const img = input.nextElementSibling;
     const file = input.files?.[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onload = (e) => {
         img.onload = () => {
@@ -259,60 +240,6 @@ function preview(input) {
         img.src = e.target.result;
     };
     reader.readAsDataURL(file);
-}
-
-function atualizarEndereco() {
-    const escolaSelecionada = document.getElementById("obra").value;
-    const enderecoCampo = document.getElementById("local");
-    const empresaCampo = document.getElementById("empresa");
-
-    const enderecosEscolas = {
-        "EMEEF Prof. Luiz Francisco Lucena Borges":
-            "Rua Cláudio Manoel da Costa, 270 – Jardim Itu Sabará – CEP 91210-250",
-        "EMEF Nossa Senhora de Fátima":
-            "Rua A, nº 15 – Vila Nossa Senhora de Fátima – Bom Jesus – CEP 91420-701",
-        "EMEF José Mariano Beck":
-            "Rua Joaquim Porto Villanova, 135 – Jardim Carvalho – CEP 91410-400",
-        "EMEF América":
-            "Rua Padre Ângelo Costa, 175 – Vila Vargas – Partenon – CEP 91520-161",
-        "EMEF Prof. Judith Macedo de Araújo":
-            "Rua Saul Constantino, 100 – Vila São José – CEP 91520-716",
-        "EMEF Dep. Marcírio Goulart Loureiro":
-            "Rua Saibreira, 1 – Bairro Coronel Aparício Borges – CEP 91510-350",
-        "EMEF Morro da Cruz":
-            "Rua Santa Teresa, 541 – Bairro São José – CEP 91520-713",
-        "EMEF Heitor Villa Lobos":
-            "Avenida Santo Dias da Silva, s/nº – Lomba do Pinheiro – CEP 91550-240",
-        "EMEF Rincão":
-            "Rua Luiz Otávio, 347 - Belém Velho, Porto Alegre - RS, 91787-330",
-        "EMEF Afonso Guerreiro Lima":
-            "R. Guaíba, 203 - Lomba do Pinheiro, Porto Alegre - RS, 91560-640",
-        "EMEF Saint Hilaire":
-            "R. Gervazio Braga Pinheiro, 427 - Lomba do Pinheiro, Porto Alegre - RS, 91570-490",
-        "EMEI Protásio Alves":
-            "Rua Aracy Fróes, 210 – Jardim Sabará – CEP 91210-230",
-        "EMEI Vale Verde": "Rua Franklin, 270 – Jardim Sabará – CEP 91210-060",
-        "EMEI Jardim Bento Gonçalves":
-            "Rua Sargento Expedicionário Geraldo Santana, 40 – Partenon – CEP 91530-640",
-        "EMEI Padre Ângelo Costa":
-            "Rua Primeiro de Março, 300 – Bairro Partenon – CEP 91520-620",
-        "EMEI Dr. Walter Silber":
-            "Rua Frei Clemente, 150 – Vila São José – CEP 91520-260",
-        "EMEI Maria Marques Fernandes":
-            "Avenida Santo Dias da Silva, 550 – Lomba do Pinheiro – CEP 91550-500",
-        "EMEI Vila Mapa II":
-            "Rua Pedro Golombiewski, 100 – Lomba do Pinheiro – CEP 91550-230",
-        "EMEI Vila Nova São Carlos":
-            "DR. Darcy Reis Nunes, 30 - Lomba do Pinheiro, Porto Alegre - RS, 91560-570",
-    };
-
-    let enderecoBase = enderecosEscolas[escolaSelecionada] || "";
-    if (enderecoBase && !enderecoBase.toLowerCase().includes("porto alegre")) {
-        enderecoBase += " – Porto Alegre, RS";
-    }
-
-    enderecoCampo.value = enderecoBase;
-    empresaCampo.value = "ENGPAC";
 }
 
 document.addEventListener("input", function (event) {
