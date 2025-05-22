@@ -4,21 +4,31 @@ const BIN_ID = "682f9e008960c979a59fafc3";
 const API_KEY = "$2a$10$c05DFLTv7rO5jr0vEr8gfOtadh6z6ztWedJjNr.k/m0tMCP5oXEdi"; // Copie da seção "CHAVES DE API" do JSONBin
 
 async function carregarFormularios() {
-    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
-        headers: {
-            "X-Master-Key": API_KEY,
-        },
-    });
-    const data = await res.json();
-    formularios = data.record || [];
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+    method: "PUT",
+    headers: {
+        "Content-Type": "application/json",
+        "X-Master-Key": API_KEY,
+        "X-Bin-Versioning": false,
+    },
+    body: JSON.stringify(formularios),
+})
+.then(response => {
+    if (!response.ok) {
+        throw new Error("Erro ao salvar no JSONBin");
+    }
+    return response.json();
+})
+.then(() => {
+    idAtual = null;
     atualizarLista();
-}
+    limparFormulario();
+})
+.catch(error => {
+    console.error("Erro ao salvar:", error);
+    alert("Erro ao salvar o formulário. Veja o console para detalhes.");
+});
 
-let idAtual = null;
-
-window.onload = () => {
-    carregarFormularios();
-};
 
 function salvarFormulario() {
     const dados = {
