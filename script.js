@@ -64,7 +64,7 @@ function salvarFormulario() {
             "X-Master-Key": API_KEY,
             "X-Bin-Versioning": false
         },
-        body: JSON.stringify(formularios),
+        body: JSON.stringify({ formularios }),
     }).then(() => {
         idAtual = null;
         atualizarLista();
