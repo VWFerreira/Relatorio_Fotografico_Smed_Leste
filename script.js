@@ -11,6 +11,7 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+const storage = firebase.storage();
 
 let formularios = [];
 let idAtual = null;
@@ -42,27 +43,49 @@ function salvarFormulario() {
         return;
     }
 
-    document.querySelectorAll(".bloco-4-fotos .foto-card").forEach((card) => {
+    const promises = [];
+    document.querySelectorAll(".bloco-4-fotos .foto-card").forEach((card, index) => {
         const descricao = card.querySelector("textarea[placeholder='Descrição do Serviço']").value;
         const img = card.querySelector("img");
-        dados.fotos.push({
-            descricao,
-            imagem: img && img.src && img.style.display !== "none" ? img.src : null,
-        });
+        const input = card.querySelector("input[type='file']");
+        const file = input.files?.[0];
+
+        if (file) {
+            const storageRef = storage.ref().child(`fotos/${dados.id}_${index}_${file.name}`);
+            const uploadTask = storageRef.put(file);
+
+            const promise = new Promise((resolve) => {
+                uploadTask.on("state_changed", null, null, () => {
+                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                        dados.fotos.push({ descricao, imagem: downloadURL });
+                        resolve();
+                    });
+                });
+            });
+
+            promises.push(promise);
+        } else {
+            dados.fotos.push({ descricao, imagem: img && img.src && img.style.display !== "none" ? img.src : null });
+        }
     });
 
-    const existente = formularios.findIndex((f) => f.id === dados.id);
-    if (existente !== -1) {
-        formularios[existente] = dados;
-    } else {
-        formularios.push(dados);
-        if (formularios.length > 10) formularios.shift();
-    }
+    Promise.all(promises).then(() => {
+        const existente = formularios.findIndex((f) => f.id === dados.id);
+        if (existente !== -1) {
+            formularios[existente] = dados;
+        } else {
+            formularios.push(dados);
+            if (formularios.length > 10) {
+                formularios.shift();
+                alert("Limite de 10 formulários atingido. O mais antigo foi removido automaticamente.");
+            }
+        }
 
-    db.ref("formularios").set(formularios).then(() => {
-        idAtual = null;
-        atualizarLista();
-        limparFormulario();
+        db.ref("formularios").set(formularios).then(() => {
+            idAtual = null;
+            atualizarLista();
+            limparFormulario();
+        });
     });
 }
 
