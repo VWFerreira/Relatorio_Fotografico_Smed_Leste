@@ -11,7 +11,7 @@ async function carregarFormularios() {
             },
         });
         const data = await res.json();
-        formularios = data.record || [];
+        formularios = data.record.formularios || [];
         atualizarLista();
     } catch (err) {
         console.error("Erro ao carregar dados:", err);
