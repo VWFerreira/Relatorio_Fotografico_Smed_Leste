@@ -98,7 +98,7 @@ function excluirFormulario(id) {
             "X-Master-Key": API_KEY,
             "X-Bin-Versioning": false,
         },
-        body: JSON.stringify(formularios),
+        body: JSON.stringify({ formularios }),
     }).then(() => atualizarLista());
 }
 
