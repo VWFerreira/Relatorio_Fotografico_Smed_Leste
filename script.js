@@ -1,28 +1,30 @@
+// CONFIGURAÇÃO DO FIREBASE — substitua pelos seus próprios dados
+const firebaseConfig = {
+    apiKey: "AIzaSyAFVcAp2P2fytO9jZ09s_1hcx-ougPsw",
+    authDomain: "relatoriosengpac.firebaseapp.com",
+    databaseURL: "https://relatoriosengpac-default-rtdb.firebaseio.com",
+    projectId: "relatoriosengpac",
+    storageBucket: "relatoriosengpac.appspot.com",
+    messagingSenderId: "990197024543",
+    appId: "1:990197024543:web:7bd5375154be81bb570f54"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
 let formularios = [];
-
-const BIN_ID = "682f9e008960c979a59fafc3";
-const API_KEY = "$2a$10$c05DFLTv7rO5jr0vEr8gfOtadh6z6ztWedJjNr.k/m0tMCP5oXEdi";
-
-async function carregarFormularios() {
-    try {
-        const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
-            headers: {
-                "X-Master-Key": API_KEY,
-            },
-        });
-        const data = await res.json();
-        formularios = data.record.formularios || [];
-        atualizarLista();
-    } catch (err) {
-        console.error("Erro ao carregar dados:", err);
-    }
-}
-
 let idAtual = null;
 
 window.onload = () => {
     carregarFormularios();
 };
+
+function carregarFormularios() {
+    db.ref("formularios").once("value", (snapshot) => {
+        formularios = snapshot.val() || [];
+        atualizarLista();
+    });
+}
 
 function salvarFormulario() {
     const dados = {
@@ -57,20 +59,10 @@ function salvarFormulario() {
         if (formularios.length > 10) formularios.shift();
     }
 
-    fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-            "X-Master-Key": API_KEY,
-            "X-Bin-Versioning": false
-        },
-        body: JSON.stringify({ formularios }),
-    }).then(() => {
+    db.ref("formularios").set(formularios).then(() => {
         idAtual = null;
         atualizarLista();
         limparFormulario();
-    }).catch((err) => {
-        console.error("Erro ao salvar:", err);
     });
 }
 
@@ -90,16 +82,7 @@ function novoFormulario() {
 
 function excluirFormulario(id) {
     formularios = formularios.filter((f) => f.id !== id);
-
-    fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-            "X-Master-Key": API_KEY,
-            "X-Bin-Versioning": false,
-        },
-        body: JSON.stringify({ formularios }),
-    }).then(() => atualizarLista());
+    db.ref("formularios").set(formularios).then(() => atualizarLista());
 }
 
 function atualizarLista() {
@@ -168,61 +151,6 @@ function abrirFormulario(id) {
     idAtual = id;
 }
 
-function atualizarEndereco() {
-    const escolaSelecionada = document.getElementById("obra").value;
-    const enderecoCampo = document.getElementById("local");
-    const empresaCampo = document.getElementById("empresa");
-
-    const enderecosEscolas = {
-        "EMEEF Prof. Luiz Francisco Lucena Borges":
-            "Rua Cláudio Manoel da Costa, 270 – Jardim Itu Sabará – CEP 91210-250",
-        "EMEF Nossa Senhora de Fátima":
-            "Rua A, nº 15 – Vila Nossa Senhora de Fátima – Bom Jesus – CEP 91420-701",
-        "EMEF José Mariano Beck":
-            "Rua Joaquim Porto Villanova, 135 – Jardim Carvalho – CEP 91410-400",
-        "EMEF América":
-            "Rua Padre Ângelo Costa, 175 – Vila Vargas – Partenon – CEP 91520-161",
-        "EMEF Prof. Judith Macedo de Araújo":
-            "Rua Saul Constantino, 100 – Vila São José – CEP 91520-716",
-        "EMEF Dep. Marcírio Goulart Loureiro":
-            "Rua Saibreira, 1 – Bairro Coronel Aparício Borges – CEP 91510-350",
-        "EMEF Morro da Cruz":
-            "Rua Santa Teresa, 541 – Bairro São José – CEP 91520-713",
-        "EMEF Heitor Villa Lobos":
-            "Avenida Santo Dias da Silva, s/nº – Lomba do Pinheiro – CEP 91550-240",
-        "EMEF Rincão":
-            "Rua Luiz Otávio, 347 - Belém Velho, Porto Alegre - RS, 91787-330",
-        "EMEF Afonso Guerreiro Lima":
-            "R. Guaíba, 203 - Lomba do Pinheiro, Porto Alegre - RS, 91560-640",
-        "EMEF Saint Hilaire":
-            "R. Gervazio Braga Pinheiro, 427 - Lomba do Pinheiro, Porto Alegre - RS, 91570-490",
-        "EMEI Protásio Alves":
-            "Rua Aracy Fróes, 210 – Jardim Sabará – CEP 91210-230",
-        "EMEI Vale Verde": "Rua Franklin, 270 – Jardim Sabará – CEP 91210-060",
-        "EMEI Jardim Bento Gonçalves":
-            "Rua Sargento Expedicionário Geraldo Santana, 40 – Partenon – CEP 91530-640",
-        "EMEI Padre Ângelo Costa":
-            "Rua Primeiro de Março, 300 – Bairro Partenon – CEP 91520-620",
-        "EMEI Dr. Walter Silber":
-            "Rua Frei Clemente, 150 – Vila São José – CEP 91520-260",
-        "EMEI Maria Marques Fernandes":
-            "Avenida Santo Dias da Silva, 550 – Lomba do Pinheiro – CEP 91550-500",
-        "EMEI Vila Mapa II":
-            "Rua Pedro Golombiewski, 100 – Lomba do Pinheiro – CEP 91550-230",
-        "EMEI Vila Nova São Carlos":
-            "DR. Darcy Reis Nunes, 30 - Lomba do Pinheiro, Porto Alegre - RS, 91560-570",
-    };
-
-    let enderecoBase = enderecosEscolas[escolaSelecionada] || "";
-    if (enderecoBase && !enderecoBase.toLowerCase().includes("porto alegre")) {
-        enderecoBase += " – Porto Alegre, RS";
-    }
-
-    enderecoCampo.value = enderecoBase;
-    empresaCampo.value = "ENGPAC";
-}
-
-
 function adicionarFotos() {
     const container = document.getElementById("fotos-container");
     let blocos = container.querySelectorAll(".bloco-4-fotos");
@@ -277,6 +205,61 @@ function adicionarFotos() {
     card.appendChild(img);
     ultimoBloco.appendChild(card);
 }
+function atualizarEndereco() {
+    const escolaSelecionada = document.getElementById("obra").value;
+    const enderecoCampo = document.getElementById("local");
+    const empresaCampo = document.getElementById("empresa");
+
+    const enderecosEscolas = {
+        "EMEEF Prof. Luiz Francisco Lucena Borges":
+            "Rua Cláudio Manoel da Costa, 270 – Jardim Itu Sabará – CEP 91210-250",
+        "EMEF Nossa Senhora de Fátima":
+            "Rua A, nº 15 – Vila Nossa Senhora de Fátima – Bom Jesus – CEP 91420-701",
+        "EMEF José Mariano Beck":
+            "Rua Joaquim Porto Villanova, 135 – Jardim Carvalho – CEP 91410-400",
+        "EMEF América":
+            "Rua Padre Ângelo Costa, 175 – Vila Vargas – Partenon – CEP 91520-161",
+        "EMEF Prof. Judith Macedo de Araújo":
+            "Rua Saul Constantino, 100 – Vila São José – CEP 91520-716",
+        "EMEF Dep. Marcírio Goulart Loureiro":
+            "Rua Saibreira, 1 – Bairro Coronel Aparício Borges – CEP 91510-350",
+        "EMEF Morro da Cruz":
+            "Rua Santa Teresa, 541 – Bairro São José – CEP 91520-713",
+        "EMEF Heitor Villa Lobos":
+            "Avenida Santo Dias da Silva, s/nº – Lomba do Pinheiro – CEP 91550-240",
+        "EMEF Rincão":
+            "Rua Luiz Otávio, 347 - Belém Velho, Porto Alegre - RS, 91787-330",
+        "EMEF Afonso Guerreiro Lima":
+            "R. Guaíba, 203 - Lomba do Pinheiro, Porto Alegre - RS, 91560-640",
+        "EMEF Saint Hilaire":
+            "R. Gervazio Braga Pinheiro, 427 - Lomba do Pinheiro, Porto Alegre - RS, 91570-490",
+        "EMEI Protásio Alves":
+            "Rua Aracy Fróes, 210 – Jardim Sabará – CEP 91210-230",
+        "EMEI Vale Verde":
+            "Rua Franklin, 270 – Jardim Sabará – CEP 91210-060",
+        "EMEI Jardim Bento Gonçalves":
+            "Rua Sargento Expedicionário Geraldo Santana, 40 – Partenon – CEP 91530-640",
+        "EMEI Padre Ângelo Costa":
+            "Rua Primeiro de Março, 300 – Bairro Partenon – CEP 91520-620",
+        "EMEI Dr. Walter Silber":
+            "Rua Frei Clemente, 150 – Vila São José – CEP 91520-260",
+        "EMEI Maria Marques Fernandes":
+            "Avenida Santo Dias da Silva, 550 – Lomba do Pinheiro – CEP 91550-500",
+        "EMEI Vila Mapa II":
+            "Rua Pedro Golombiewski, 100 – Lomba do Pinheiro – CEP 91550-230",
+        "EMEI Vila Nova São Carlos":
+            "DR. Darcy Reis Nunes, 30 - Lomba do Pinheiro, Porto Alegre - RS, 91560-570",
+    };
+
+    let enderecoBase = enderecosEscolas[escolaSelecionada] || "";
+    if (enderecoBase && !enderecoBase.toLowerCase().includes("porto alegre")) {
+        enderecoBase += " – Porto Alegre, RS";
+    }
+
+    enderecoCampo.value = enderecoBase;
+    empresaCampo.value = "ENGPAC";
+}
+
 
 function preview(input) {
     const img = input.nextElementSibling;
