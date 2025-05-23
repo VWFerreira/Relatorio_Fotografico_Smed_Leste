@@ -289,26 +289,25 @@ button,
 }
 
 /* ====== LATERAL ESQUERDA ====== */
-.painel-formularios {
-  width: 300px;
-  background: #f8f9fa;
-  border-right: 1px solid #dee2e6;
-  padding: 20px;
-  font-family: 'Roboto', sans-serif;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
-}
 .titulo-formularios {
   font-weight: bold;
+  font-size: 1.5rem; /* aumenta o tamanho do texto */
   color: #343a40;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   margin-bottom: 20px;
 }
 
+.titulo-formularios::before {
+  content: "";
+  display: inline-block;
+  width: 28px;       /* aumenta o tamanho do ícone */
+  height: 28px;
+  background-image: url('https://cdn-icons-png.flaticon.com/128/5569/5569750.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+}
 .painel-formularios h3,
 .painel-formularios h5 {
     font-size: 16px;
